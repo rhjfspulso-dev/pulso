@@ -149,8 +149,13 @@ async function autoProxima() {
 
   const res = await enviarOuEnfileirar(payload);
   const faixa = classificar(media);
-  document.getElementById('auto-resultado').innerHTML =
-    `A sua autoavaliação registou média <b>${media.toFixed(2)}</b> — ${faixa}.`;
+ document.getElementById('auto-resultado').innerHTML =
+     `<div class="media-caixa">
+     <div class="media-rotulo">A sua autopercepção</div>
+     <div class="media-num">${media.toFixed(2)}<span class="media-max"> / 4</span></div>
+      <div class="media-faixa">${faixa}</div>
+      </div>
+      <p class="media-nota">Esta é a média da <b> sua própria avaliação</b>. Não é a nota final - o resultado consolidado inclui a avaliação do seu gestor e será apresentado na reunião de feedback.</p>`;
   document.getElementById('auto-sync').innerHTML = res.enviado
     ? '<span>&#9729;</span> Enviado ao servidor do RH'
     : '<span>&#8987;</span> Guardado no telemóvel — será enviado quando houver rede';
