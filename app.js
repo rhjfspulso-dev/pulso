@@ -4,7 +4,7 @@
    ============================================================ */
 
 // >>> COLE AQUI O URL DO APPS SCRIPT (termina em /exec) <<<
-const API_URL = https://script.google.com/macros/s/AKfycbzBreSCJ6tSVYfzKzmOUgWm2UpGdBfoUYQEKlg57k4KQTdZbikGeXB29jt8BHFh09YA/exec;
+const API_URL = 'https://script.google.com/macros/s/AKfycbzBreSCJ6tSVYfzKzmOUgWm2UpGdBfoUYQEKlg57k4KQTdZbikGeXB29jt8BHFh09YA/exec';
 
 // ---- Conteúdo do formulário (espelha o procedimento IT_RH_28) ----
 const COMPETENCIAS = [
