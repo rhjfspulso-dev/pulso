@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Pulso JFS</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="wrap">
+
+  <!-- LOADING -->
+  <div class="tela ativa" id="tela-loading">
+    <div class="centro">
+      <div class="logo-grande">Pulso <span>JFS</span></div>
+      <div class="spinner"></div>
+      <p class="cinza">A carregar…</p>
+    </div>
+  </div>
+
+  <!-- SEM TOKEN -->
+  <div class="tela" id="tela-sem-token">
+    <div class="centro">
+      <div class="logo-grande">Pulso <span>JFS</span></div>
+      <p class="cinza" style="margin-top:16px">Para participar, abra o link pessoal que recebeu por email ou WhatsApp.</p>
+    </div>
+  </div>
+
+  <!-- ERRO -->
+  <div class="tela" id="tela-erro">
+    <div class="centro">
+      <div class="logo-grande">Pulso <span>JFS</span></div>
+      <p class="cinza" id="erro-msg" style="margin-top:16px"></p>
+      <button class="btn-primario" style="margin-top:16px" onclick="location.reload()">Tentar novamente</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="tela" id="tela-home">
+    <div class="hero">
+      <div class="logo">Pulso <span>JFS</span></div>
+      <div class="hero-nome" id="home-nome"></div>
+      <div class="hero-cargo" id="home-cargo"></div>
+    </div>
+    <div class="cards" id="home-cards"></div>
+    <div class="rodape">Grupo João Ferreira dos Santos</div>
+  </div>
+
+  <!-- AUTOAVALIAÇÃO -->
+  <div class="tela" id="tela-auto">
+    <div class="cab" style="background:var(--navy)">
+      <div class="cab-t">Pulso <span>JFS</span></div>
+      <div class="cab-s">Autoavaliação · Ciclo 2026</div>
+    </div>
+    <div class="barra-fundo"><div class="barra" id="a-barra"></div></div>
+    <div class="corpo">
+      <div class="q-lbl" id="a-progresso"></div>
+      <div class="q-tit" id="a-nome"></div>
+      <div class="q-desc" id="a-desc"></div>
+      <div id="a-opcoes"></div>
+    </div>
+    <div class="pe">
+      <button class="btn-sec" id="a-ant" onclick="autoAnterior()">Anterior</button>
+      <button class="btn-primario" id="a-prox" style="flex:1.5" onclick="autoProxima()" disabled>Próxima</button>
+    </div>
+  </div>
+
+  <!-- FIM AUTOAVALIAÇÃO -->
+  <div class="tela" id="tela-auto-fim">
+    <div class="cab" style="background:var(--navy)">
+      <div class="cab-t">Pulso <span>JFS</span></div>
+      <div class="cab-s">Autoavaliação · concluída</div>
+    </div>
+    <div class="fim">
+      <div class="check">&#10003;</div>
+      <div class="fim-t">Autoavaliação enviada!</div>
+      <div class="fim-p" id="auto-resultado"></div>
+      <div class="pinfo ok" id="auto-sync"></div>
+      <div class="pinfo neutro"><span>&#128337;</span> Próximo passo: reunião de feedback com o seu gestor</div>
+    </div>
+    <div class="pe">
+      <button class="btn-primario" onclick="renderHome();mostrar('tela-home')">Voltar ao início</button>
+    </div>
+  </div>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
