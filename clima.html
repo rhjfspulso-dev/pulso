@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>Pulso JFS · Pesquisa de Satisfação</title>
+<link rel="stylesheet" href="estilo.css">
+<style>
+/* ajustes específicos do clima */
+.wrap{max-width:480px}
+.dim-badge{font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--neon);margin-bottom:6px}
+.intro-box{padding:20px 18px}
+.intro-box h2{font-size:18px;margin-bottom:12px;color:var(--txt)}
+.intro-box p{font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:10px}
+.intro-box .anon{background:var(--verde-bg);border:1px solid rgba(57,211,83,.25);border-radius:9px;padding:12px;font-size:12px;color:var(--verde);margin-top:8px;display:flex;gap:8px;align-items:center}
+.select-box{margin-bottom:14px}
+.select-box label{display:block;font-size:12px;font-weight:600;color:var(--txt);margin-bottom:6px}
+.select-box label .fac{font-weight:400;color:var(--txt3);font-family:var(--mono);font-size:10px}
+.sel{width:100%;padding:12px;background:var(--bg2);border:1px solid var(--linha);border-radius:9px;color:var(--txt);font-family:var(--sans);font-size:13px}
+.sel:focus{outline:none;border-color:var(--neon)}
+.motivos-grid{display:flex;flex-direction:column;gap:7px}
+.motivo{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--bg2);border:1px solid var(--linha);border-radius:8px;font-size:12px;cursor:pointer;transition:all .12s}
+.motivo:active{transform:scale(.99)}
+.motivo.sel{background:var(--neon-glow);border-color:var(--neon)}
+.motivo .cx{width:18px;height:18px;border:1.5px solid var(--linha2);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.motivo.sel .cx{background:var(--neon);border-color:var(--neon);color:#fff}
+.contador{font-family:var(--mono);font-size:11px;color:var(--txt2);text-align:center;margin-top:10px}
+.txt-area{width:100%;padding:12px;background:var(--bg2);border:1px solid var(--linha);border-radius:9px;color:var(--txt);font-family:var(--sans);font-size:13px;resize:none;margin-bottom:10px}
+.txt-area:focus{outline:none;border-color:var(--neon)}
+.txt-lbl{font-size:12px;color:var(--txt2);margin-bottom:6px}
+.opcional{font-size:11px;color:var(--txt3);font-style:italic;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div class="wrap" style="height:100%">
+
+<!-- INTRO -->
+<div class="tela ativa" id="tela-intro">
+  <div class="hero">
+    <div class="logo">Pulso <span>JFS</span></div>
+    <div class="hero-cargo" style="margin-top:12px">Pesquisa de Satisfação · 2026</div>
+  </div>
+  <div class="corpo intro-box">
+    <h2>A sua opinião conta e transforma.</h2>
+    <p>Com o objectivo de medir o seu grau de satisfação e motivação, promovemos esta pesquisa. Para responder, basta assinalar a opção que mais se enquadra à sua situação.</p>
+    <p>Não existem respostas certas ou erradas. Use os campos abertos para deixar os seus comentários.</p>
+    <div class="anon"><span>&#128274;</span> A pesquisa é 100% confidencial e anónima. Nenhuma resposta é ligada a si.</div>
+  </div>
+  <div class="pe">
+    <button class="btn-primario" onclick="irIdentificacao()">Começar</button>
+  </div>
+</div>
+
+<!-- IDENTIFICAÇÃO (não-identificável) -->
+<div class="tela" id="tela-ident">
+  <div class="cab" style="background:var(--bg2)">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Sobre si · não é preciso identificar-se</div>
+  </div>
+  <div class="corpo">
+    <div class="select-box">
+      <label>Área de negócio</label>
+      <select class="sel" id="i-area">
+        <option value="">Seleccione…</option>
+        <option>Automóvel</option>
+        <option>Imobiliária</option>
+        <option>Agrícola</option>
+        <option>Serviços Centrais</option>
+      </select>
+    </div>
+    <div class="select-box">
+      <label>Unidade</label>
+      <select class="sel" id="i-unidade"><option value="">Seleccione…</option></select>
+    </div>
+    <div class="select-box">
+      <label>Antiguidade <span class="fac">facultativo</span></label>
+      <select class="sel" id="i-antig">
+        <option value="">Prefiro não responder</option>
+        <option>Até 2 anos</option>
+        <option>2 - 5 anos</option>
+        <option>Mais de 5 anos</option>
+      </select>
+    </div>
+    <div class="select-box">
+      <label>Escalão etário <span class="fac">facultativo</span></label>
+      <select class="sel" id="i-idade">
+        <option value="">Prefiro não responder</option>
+        <option>Até 30 anos</option>
+        <option>30 - 45 anos</option>
+        <option>Mais de 45 anos</option>
+      </select>
+    </div>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" onclick="mostrar('tela-intro')">Voltar</button>
+    <button class="btn-primario" style="flex:1.5" onclick="iniciarPerguntas()">Continuar</button>
+  </div>
+</div>
+
+<!-- AFIRMAÇÕES (escala) -->
+<div class="tela" id="tela-pergunta">
+  <div class="cab" style="background:var(--bg2)">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Pesquisa de Satisfação · anónima</div>
+  </div>
+  <div class="barra-fundo"><div class="barra" id="p-barra"></div></div>
+  <div class="corpo">
+    <div class="dim-badge" id="p-dim"></div>
+    <div class="q-lbl" id="p-num"></div>
+    <div class="q-tit" id="p-texto" style="font-size:15px;font-weight:500"></div>
+    <div id="p-opcoes" style="margin-top:16px"></div>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" id="p-ant" onclick="pergAnterior()">Anterior</button>
+    <button class="btn-primario" id="p-prox" style="flex:1.5" onclick="pergProxima()" disabled>Próxima</button>
+  </div>
+</div>
+
+<!-- VII. MOTIVOS -->
+<div class="tela" id="tela-motivos">
+  <div class="cab" style="background:var(--bg2)">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Local ideal para trabalhar</div>
+  </div>
+  <div class="corpo">
+    <div class="q-desc" style="margin-bottom:14px">Considera a empresa o local ideal para trabalhar? Escolha <b>até 5 motivos</b>. Se não considerar, não escolha nenhum e explique no fim.</div>
+    <div class="motivos-grid" id="motivos-lista"></div>
+    <div class="contador" id="motivos-cont">0 de 5 seleccionados</div>
+    <div style="margin-top:16px">
+      <div class="txt-lbl">Se <b>não</b> considera o local ideal, porquê?</div>
+      <textarea class="txt-area" id="m-naoideal" rows="3" placeholder="Opcional…"></textarea>
+    </div>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" onclick="voltarParaUltimaPergunta()">Anterior</button>
+    <button class="btn-primario" style="flex:1.5" onclick="mostrar('tela-melhorias')">Continuar</button>
+  </div>
+</div>
+
+<!-- VIII. MELHORIAS -->
+<div class="tela" id="tela-melhorias">
+  <div class="cab" style="background:var(--bg2)">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Oportunidades de melhoria</div>
+  </div>
+  <div class="corpo">
+    <div class="q-desc" style="margin-bottom:14px">Em que aspectos a empresa poderia melhorar? Indique <b>até 3</b>.</div>
+    <div class="txt-lbl">1.</div>
+    <textarea class="txt-area" id="mel1" rows="2" placeholder="Primeira oportunidade de melhoria…"></textarea>
+    <div class="txt-lbl">2.</div>
+    <textarea class="txt-area" id="mel2" rows="2" placeholder="Opcional…"></textarea>
+    <div class="txt-lbl">3.</div>
+    <textarea class="txt-area" id="mel3" rows="2" placeholder="Opcional…"></textarea>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" onclick="mostrar('tela-motivos')">Anterior</button>
+    <button class="btn-primario" style="flex:1.5" onclick="mostrar('tela-comentario')">Continuar</button>
+  </div>
+</div>
+
+<!-- IX. COMENTÁRIO -->
+<div class="tela" id="tela-comentario">
+  <div class="cab" style="background:var(--bg2)">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Comentário final</div>
+  </div>
+  <div class="corpo">
+    <div class="q-desc" style="margin-bottom:6px">Use este espaço para detalhar as suas respostas, se quiser.</div>
+    <div class="opcional">Resposta facultativa.</div>
+    <textarea class="txt-area" id="comentario" rows="6" placeholder="O seu comentário…"></textarea>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" onclick="mostrar('tela-melhorias')">Anterior</button>
+    <button class="btn-primario" id="btn-submeter" style="flex:1.5" onclick="submeter()">Submeter pesquisa</button>
+  </div>
+</div>
+
+<!-- FIM -->
+<div class="tela" id="tela-fim">
+  <div class="cab" style="background:var(--bg2)">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Pesquisa concluída</div>
+  </div>
+  <div class="fim">
+    <div class="check">&#10003;</div>
+    <div class="fim-t">A sua voz foi registada!</div>
+    <div class="fim-p">
+      <div class="pinfo ok" id="fim-sync"></div>
+      <div class="pinfo neutro"><span>&#128274;</span> A sua resposta é totalmente anónima</div>
+      <div class="pinfo neutro"><span>&#128202;</span> Os resultados serão partilhados com todos</div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script src="clima.js"></script>
+</body>
+</html>
