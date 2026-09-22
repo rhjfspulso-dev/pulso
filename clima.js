@@ -4,7 +4,7 @@
    ============================================================ */
 
 // >>> COLE AQUI O URL DO APPS SCRIPT (termina em /exec) <<<
-const API_URL = 'const API_URL = 'https://script.google.com/macros/s/AKfycbzBreSCJ6tSVYfzKzmOUgWm2UpGdBfoUYQEKlg57k4KQTdZbikGeXB29jt8BHFh09YA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzBreSCJ6tSVYfzKzmOUgWm2UpGdBfoUYQEKlg57k4KQTdZbikGeXB29jt8BHFh09YA/exec';
 
 // ---- 25 afirmações em 6 dimensões (questionário oficial) ----
 const DIMENSOES = [
