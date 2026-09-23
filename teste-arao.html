@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pulso JFS · Teste Arão (TI)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--linha:#30363d;--txt:#e6edf3;--txt2:#7d8590;--txt3:#484f58;--neon:#ff3366;--neon-glow:rgba(255,51,102,.15);--verde:#39d353;--amarelo:#d29922;--roxo:#a371f7;--mono:'JetBrains Mono',monospace}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.wrap{max-width:820px;margin:0 auto;padding:40px 24px}
+.hero{border-bottom:1px solid var(--linha);padding-bottom:24px;margin-bottom:28px;position:relative}
+.hero::before{content:'';position:absolute;top:-40px;left:-24px;right:-24px;height:3px;background:linear-gradient(90deg,transparent,var(--neon),transparent)}
+h1{font-size:26px;font-weight:700;letter-spacing:-.5px}
+h1 span{color:var(--neon)}
+.sub{color:var(--txt2);font-size:14px;margin-top:6px}
+.intro{background:var(--bg2);border:1px solid var(--linha);border-radius:12px;padding:18px 20px;margin-bottom:28px;font-size:14px}
+.intro b{color:var(--txt)}
+h2{font-size:15px;font-weight:600;margin:32px 0 14px;color:var(--txt);display:flex;align-items:center;gap:8px}
+h2::before{content:'';width:3px;height:16px;background:var(--neon);border-radius:2px}
+.etapa{font-family:var(--mono);font-size:11px;color:var(--neon);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin:34px 0 4px}
+.perfil{background:var(--bg2);border:1px solid var(--linha);border-radius:12px;padding:20px;margin-bottom:16px;transition:border-color .2s}
+.perfil:hover{border-color:var(--neon)}
+.perfil-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px}
+.perfil-nome{font-size:16px;font-weight:600}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.tag-360{background:var(--neon-glow);color:var(--neon);border:1px solid rgba(255,51,102,.3)}
+.tag-270{background:rgba(210,153,34,.12);color:var(--amarelo);border:1px solid rgba(210,153,34,.3)}
+.tag-90{background:rgba(57,211,83,.12);color:var(--verde);border:1px solid rgba(57,211,83,.3)}
+.tag-clima{background:rgba(163,113,247,.12);color:var(--roxo);border:1px solid rgba(163,113,247,.3)}
+.tag-dash{background:var(--bg3);color:var(--txt2);border:1px solid var(--linha)}
+.perfil-cargo{font-family:var(--mono);font-size:12px;color:var(--txt2);margin-bottom:14px}
+.perfil-oque{font-size:13px;color:var(--txt2);margin-bottom:14px}
+.perfil-oque b{color:var(--txt)}
+.btn{display:inline-block;background:var(--neon);color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:11px 20px;border-radius:8px;transition:all .15s}
+.btn:hover{box-shadow:0 0 20px var(--neon-glow);transform:translateY(-1px)}
+.btn-roxo{background:var(--roxo)}
+.link-txt{font-family:var(--mono);font-size:11px;color:var(--txt2);margin-top:10px;word-break:break-all;background:var(--bg);padding:8px 10px;border-radius:6px;border:1px solid var(--linha)}
+.checklist{background:var(--bg2);border:1px solid var(--linha);border-radius:12px;padding:20px;margin-top:8px}
+.check-item{display:flex;gap:10px;padding:8px 0;font-size:14px;border-bottom:1px solid var(--linha)}
+.check-item:last-child{border:none}
+.check-box{width:18px;height:18px;border:1.5px solid var(--neon);border-radius:4px;flex-shrink:0;margin-top:2px}
+.dash-box{background:var(--bg2);border:1px solid var(--roxo);border-radius:12px;padding:20px}
+.pin-box{font-family:var(--mono);font-size:15px;background:var(--bg);border:1px dashed var(--roxo);border-radius:8px;padding:10px 16px;display:inline-block;margin-top:10px;color:var(--txt)}
+.rodape{margin-top:40px;padding-top:20px;border-top:1px solid var(--linha);font-family:var(--mono);font-size:11px;color:var(--txt2);text-align:center}
+.destaque{background:rgba(255,51,102,.06);border:1px solid rgba(255,51,102,.25);border-radius:10px;padding:14px 16px;font-size:13px;margin:20px 0}
+.destaque b{color:var(--neon)}
+.tech{background:var(--bg3);border:1px solid var(--linha);border-radius:10px;padding:14px 16px;font-size:12px;font-family:var(--mono);color:var(--txt2);margin:20px 0;line-height:1.7}
+.tech b{color:var(--txt)}
+</style></head>
+<body><div class="wrap">
+<div class="hero">
+  <h1>Pulso <span>JFS</span> · Teste</h1>
+  <div class="sub">Piloto interno · Arão Matusse (TI) · Ciclo 2026</div>
+</div>
+<div class="intro">
+  Olá Arão, Como responsável de TI, o teu olhar sobre o Pulso é especialmente valioso — tanto na experiência de utilizador como na parte técnica. Preparei perfis <b>só para ti</b> para testares os três tipos de avaliação, a pesquisa de clima e o dashboard.
+  <br><br>
+  <b>É ambiente de teste</b>: responde à vontade, os dados serão apagados no fim. A avaliação tem sempre dois lados — a <b>autoavaliação</b> (obrigatória, peso 0) e a <b>avaliação do gestor/pares/clientes</b> (a que forma a nota). A pesquisa de clima é <b>anónima por arquitectura</b> (nenhum campo de identificação é gravado).
+</div>
+
+<div class="tech">
+  <b>// stack, para curiosidade</b><br>
+  Front-end: PWA estática (HTML/CSS/JS puro) no GitHub Pages · funciona offline com service worker + fila IndexedDB<br>
+  Back-end: Google Apps Script (API) + Google Sheets (base de dados) · tudo na conta do RH<br>
+  Acesso por token único por pessoa, sem login · custo zero
+</div>
+
+<div class="etapa">Etapa 1 · Avaliação de Desempenho</div>
+
+<div class="perfil">
+  <div class="perfil-top">
+    <div class="perfil-nome">Arão Clário Matusse</div>
+    <span class="tag tag-360">360º · avalia a equipa</span>
+  </div>
+  <div class="perfil-cargo">Gestor de IT · Maputo · 1 liderado · o seu perfil real</div>
+  <div class="perfil-oque">Este é o <b>seu perfil real</b>. Como é gestor com liderado, entra na metodologia <b>360º</b> — tem autoavaliação e o card <b>"Avaliar a minha equipa"</b>. Nota técnica: no 360º com exatamente 1 liderado, os pesos são Gestor 50% / Liderado 10% / Pares 20% / Clientes 20% (regra específica do procedimento).</div>
+  <a class="btn" href="https://rhjfspulso-dev.github.io/pulso/index.html?t=nBICGzko">Abrir como Arão →</a>
+  <div class="link-txt">https://rhjfspulso-dev.github.io/pulso/index.html?t=nBICGzko</div>
+</div>
+<div class="perfil">
+  <div class="perfil-top">
+    <div class="perfil-nome">Adérito Sitoe</div>
+    <span class="tag tag-270">270º · gestor+pares+clientes</span>
+  </div>
+  <div class="perfil-cargo">Chefe de Equipe · Maputo</div>
+  <div class="perfil-oque">Perfil 270º — gestão sem liderados diretos, avaliado por superior, pares e clientes. A autoavaliação existe mas tem peso 0.</div>
+  <a class="btn" href="https://rhjfspulso-dev.github.io/pulso/index.html?t=TyL0yyXG">Abrir como Adérito →</a>
+  <div class="link-txt">https://rhjfspulso-dev.github.io/pulso/index.html?t=TyL0yyXG</div>
+</div>
+<div class="perfil">
+  <div class="perfil-top">
+    <div class="perfil-nome">Silvino Trilito Penane</div>
+    <span class="tag tag-90">90º · gestor avalia</span>
+  </div>
+  <div class="perfil-cargo">Técnico IT · Maputo</div>
+  <div class="perfil-oque">Um colega do TI, colaborador 90º. Faz a autoavaliação (peso 0); a nota real vem do gestor. Bom para ver o fluxo mais simples.</div>
+  <a class="btn" href="https://rhjfspulso-dev.github.io/pulso/index.html?t=eBujjh0m">Abrir como Silvino →</a>
+  <div class="link-txt">https://rhjfspulso-dev.github.io/pulso/index.html?t=eBujjh0m</div>
+</div>
+
+<div class="etapa">Etapa 2 · Pesquisa de Clima</div>
+<div class="perfil" style="border-color:rgba(163,113,247,.3)">
+  <div class="perfil-top">
+    <div class="perfil-nome">Pesquisa de Satisfação</div>
+    <span class="tag tag-clima">anónima · 25 perguntas</span>
+  </div>
+  <div class="perfil-cargo">Link único · o mesmo para toda a gente</div>
+  <div class="perfil-oque">A pesquisa oficial de satisfação (FR_RH_23-1_R2). Totalmente anónima — repara que só grava área e unidade, nunca nome ou token. 25 afirmações em 6 dimensões, motivos e comentários.</div>
+  <a class="btn btn-roxo" href="https://rhjfspulso-dev.github.io/pulso/clima.html">Abrir pesquisa de clima →</a>
+  <div class="link-txt">https://rhjfspulso-dev.github.io/pulso/clima.html</div>
+</div>
+
+<div class="etapa">Etapa 3 · Dashboard do RH</div>
+<div class="dash-box">
+  <div class="perfil-top">
+    <div class="perfil-nome">Dashboard do RH</div>
+    <span class="tag tag-dash">acesso restrito · PIN</span>
+  </div>
+  <div class="perfil-cargo" style="margin-bottom:14px">A visão que o RH terá dos resultados</div>
+  <div class="perfil-oque">Depois de responderes às avaliações e à pesquisa, abre o dashboard e vê os resultados a aparecer em tempo real: adesão por unidade, distribuição de notas, mapa de calor competência×unidade, lista de quem falta, e a pesquisa de clima. Carrega em <b>Actualizar</b> para veres os números mudarem.</div>
+  <a class="btn btn-roxo" href="https://rhjfspulso-dev.github.io/pulso/dashboard.html" style="margin-top:6px">Abrir dashboard →</a>
+  <div class="link-txt">https://rhjfspulso-dev.github.io/pulso/dashboard.html</div>
+  <div style="margin-top:12px;font-size:13px;color:var(--txt2)">PIN de acesso: <span class="pin-box">[Pulso@@2026]</span></div>
+</div>
+
+<h2>O que reparar durante o teste</h2>
+<div class="checklist">
+  <div class="check-item"><div class="check-box"></div><div>O fluxo no telemóvel é <b>rápido e sem travar</b>? Alguma tela lenta ou confusa?</div></div>
+  <div class="check-item"><div class="check-box"></div><div>As <b>perguntas e escalas</b> (avaliação e clima) estão claras?</div></div>
+  <div class="check-item"><div class="check-box"></div><div>No 360º/270º, faz sentido <b>avaliar cada pessoa</b> individualmente?</div></div>
+  <div class="check-item"><div class="check-box"></div><div>A pesquisa de clima <b>transmite confiança</b> de que é anónima?</div></div>
+  <div class="check-item"><div class="check-box"></div><div>O dashboard é <b>claro e útil</b>? Falta algum indicador?</div></div>
+  <div class="check-item"><div class="check-box"></div><div>Do ponto de vista técnico: alguma preocupação de <b>segurança, acesso ou desempenho</b>?</div></div>
+  <div class="check-item"><div class="check-box"></div><div>Algum <b>erro</b> de texto, cálculo ou comportamento inesperado?</div></div>
+</div>
+<div class="destaque">
+  <b>Depois do teste:</b> o teu retorno técnico e de utilizador é o que vamos usar para afinar antes de abrir aos colaboradores. Aponta tudo — do detalhe de texto ao que mudarias na arquitectura.
+</div>
+<div class="rodape">
+  Pulso JFS · Grupo João Ferreira dos Santos · Ambiente de teste
+</div>
+</div></body></html>
