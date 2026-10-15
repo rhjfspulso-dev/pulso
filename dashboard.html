@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e5b9a">
+<title>Pulso JFS · Dashboard RH</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6f9;--surface:#fff;--surface-2:#eef2f7;
+  --linha:#dde3ea;--linha2:#c7d0db;
+  --txt:#16222e;--txt2:#5a6b7b;--txt3:#95a3b2;
+  --azul:#0e5b9a;--azul-esc:#0a4576;--azul-bg:rgba(14,91,154,.08);
+  --verde:#2e9e5b;--verde-bg:rgba(46,158,91,.10);
+  --amarelo:#c9820a;--amarelo-bg:rgba(201,130,10,.12);
+  --vermelho:#c64141;--vermelho-bg:rgba(198,65,65,.10);
+  --sans:'Inter',system-ui,sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;min-height:100vh}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 20px 60px}
+
+/* login */
+.login{max-width:340px;margin:80px auto;text-align:center}
+.login .logo{font-size:28px;font-weight:700;margin-bottom:6px}
+.login .logo span{color:var(--azul)}
+.login p{color:var(--txt2);font-size:13px;margin-bottom:22px}
+.login input{width:100%;padding:13px;background:var(--surface);border:1.5px solid var(--linha);border-radius:10px;color:var(--txt);font-size:15px;text-align:center;letter-spacing:4px;margin-bottom:12px}
+.login input:focus{outline:none;border-color:var(--azul)}
+.login button{width:100%;padding:13px;background:var(--azul);color:#fff;border:none;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;font-family:var(--sans)}
+.login .erro{color:var(--vermelho);font-size:12px;margin-top:10px;min-height:16px}
+
+.painel{display:none}
+.painel.on{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+
+.top{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;margin-bottom:22px;border-bottom:2px solid var(--azul);flex-wrap:wrap;gap:10px}
+.top .logo{font-size:21px;font-weight:700}
+.top .logo span{color:var(--azul)}
+.top .sub{font-size:12px;color:var(--txt2);margin-top:2px}
+.top-acoes{display:flex;gap:8px}
+.tbtn{padding:8px 14px;background:var(--surface);border:1.5px solid var(--linha);border-radius:8px;color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer}
+.tbtn:hover{border-color:var(--azul);color:var(--azul)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--linha);border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(16,34,46,.04)}
+.kpi-lbl{font-size:11px;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+.kpi-num{font-size:32px;font-weight:700;margin:6px 0 2px}
+.kpi-sub{font-size:11px;color:var(--txt3)}
+.kpi-num.azul{color:var(--azul)}
+.kpi-num.verde{color:var(--verde)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:var(--surface);border:1px solid var(--linha);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,34,46,.04)}
+.card-tit{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-tit::before{content:'';width:4px;height:15px;background:var(--azul);border-radius:2px}
+.card-tit .dir{margin-left:auto;display:flex;gap:6px}
+
+.uni-row{display:grid;grid-template-columns:150px 1fr 64px;gap:10px;align-items:center;padding:7px 0;font-size:12px}
+.uni-nome{color:var(--txt2)}
+.bar{height:9px;background:var(--surface-2);border-radius:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:5px;transition:width .5s}
+.uni-pct{font-weight:700;text-align:right}
+
+.faixa-row{display:grid;grid-template-columns:170px 1fr 54px;gap:10px;align-items:center;padding:7px 0;font-size:12px}
+
+/* segmented toggle */
+.seg{display:inline-flex;border:1px solid var(--linha);border-radius:8px;overflow:hidden}
+.seg button{padding:5px 11px;background:var(--surface);border:none;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer;font-family:var(--sans)}
+.seg button.on{background:var(--azul);color:#fff}
+
+/* tabela matriz */
+.tbl-scroll{overflow-x:auto}
+table.matriz{width:100%;border-collapse:collapse;font-size:12px;min-width:760px}
+table.matriz th{text-align:left;padding:9px 8px;border-bottom:2px solid var(--linha);color:var(--txt2);font-weight:600;font-size:11px;white-space:nowrap}
+table.matriz td{padding:9px 8px;border-bottom:1px solid var(--linha);white-space:nowrap}
+table.matriz th.n,table.matriz td.n{text-align:center}
+table.matriz tr.linha{cursor:pointer}
+table.matriz tr.linha:hover{background:var(--surface-2)}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.nivel{font-size:10px;color:var(--txt2);background:var(--surface-2);border-radius:6px;padding:2px 7px}
+.detalhe td{background:var(--surface-2);padding:0}
+.detalhe-in{padding:12px 14px}
+table.sub{width:100%;border-collapse:collapse;font-size:11px}
+table.sub th,table.sub td{padding:6px 8px;border-bottom:1px solid var(--linha);text-align:center}
+table.sub th:first-child,table.sub td:first-child{text-align:left;color:var(--txt2)}
+
+/* heatmap */
+.heat-scroll{overflow-x:auto}
+.heat{display:grid;gap:3px;font-size:10px;min-width:660px}
+.heat-hd{color:var(--txt2);padding:4px 2px;text-align:center;font-size:9px;writing-mode:vertical-rl;transform:rotate(180deg);height:92px}
+.heat-lbl{color:var(--txt2);padding:6px 8px;display:flex;align-items:center;font-size:11px}
+.heat-cell{padding:8px 2px;text-align:center;border-radius:4px;font-weight:700;font-size:11px}
+
+/* perguntas por dimensão */
+.dim-acc{border:1px solid var(--linha);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.dim-head{display:grid;grid-template-columns:1fr 70px 30px;gap:8px;align-items:center;padding:11px 13px;cursor:pointer;background:var(--surface)}
+.dim-head:hover{background:var(--surface-2)}
+.dim-head .nm{font-weight:600;font-size:13px}
+.dim-head .md{font-weight:700;text-align:right}
+.dim-head .ar{color:var(--txt3);text-align:center}
+.dim-body{display:none;padding:4px 13px 12px;background:var(--surface-2)}
+.dim-body.open{display:block}
+.perg-row{display:grid;grid-template-columns:1fr 54px;gap:8px;align-items:center;padding:6px 0;font-size:12px;border-top:1px solid var(--linha)}
+.perg-row .pm{font-weight:700;text-align:right}
+
+.falta-lista{max-height:340px;overflow-y:auto}
+.falta-row{display:grid;grid-template-columns:1fr 110px 70px 72px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--linha);font-size:12px}
+.falta-row:last-child{border:none}
+.falta-nome{font-weight:600}
+.falta-meta{font-size:11px;color:var(--txt2)}
+.tag{font-size:9px;padding:3px 7px;border-radius:10px;text-align:center;font-weight:700}
+.tag-email{background:var(--verde-bg);color:var(--verde)}
+.tag-wa{background:var(--amarelo-bg);color:var(--amarelo)}
+.tag-sem{background:var(--vermelho-bg);color:var(--vermelho)}
+
+.coment-lista{max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:7px}
+.coment{background:var(--surface-2);border:1px solid var(--linha);border-radius:8px;padding:9px 11px;font-size:12px;color:var(--txt)}
+
+.vazio{text-align:center;padding:26px;color:var(--txt3);font-size:13px}
+.loading{text-align:center;padding:60px;color:var(--txt2)}
+.spin{width:30px;height:30px;border:3px solid var(--linha);border-top-color:var(--azul);border-radius:50%;margin:0 auto 14px;animation:s .7s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.motiv-row{display:grid;grid-template-columns:200px 1fr 36px;gap:10px;align-items:center;padding:5px 0;font-size:12px}
+
+@media(max-width:720px){.kpis{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="wrap" id="tela-login">
+  <div class="login">
+    <div class="logo">Pulso <span>JFS</span></div>
+    <p>Dashboard do RH · acesso restrito</p>
+    <input type="password" id="pin" placeholder="código" maxlength="16" inputmode="numeric">
+    <button onclick="entrar()">Entrar</button>
+    <div class="erro" id="login-erro"></div>
+  </div>
+</div>
+
+<!-- PAINEL -->
+<div class="wrap painel" id="painel">
+  <div class="top">
+    <div>
+      <div class="logo">Pulso <span>JFS</span></div>
+      <div class="sub" id="top-sub">Dashboard do RH · Ciclo 2026</div>
+    </div>
+    <div class="top-acoes">
+      <button class="tbtn" onclick="carregar()">↻ Actualizar</button>
+      <button class="tbtn" onclick="sair()" id="btn-sair">Sair</button>
+    </div>
+  </div>
+  <div id="conteudo"><div class="loading"><div class="spin"></div>A carregar dados…</div></div>
+</div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbyhrKBWmppokvNvW3jvJqZGj0rmS4pJOL-hi0ihUr1sjb9D607Wm4qbreZyqioewJNH/exec';
+let PIN = '';
+let RH = '';          // token de líder (link dedicado ?rh=...)
+let DADOS = null;
+let faixaModo = 'global';
+
+// login automático pelo link das líderes: dashboard.html?rh=TOKEN
+(function(){
+  const u = new URL(location.href);
+  RH = u.searchParams.get('rh') || '';
+  if (RH) {
+    document.getElementById('tela-login').style.display = 'none';
+    document.getElementById('painel').classList.add('on');
+    document.getElementById('btn-sair').style.display = 'none';
+    carregar();
+  }
+})();
+
+function entrar() {
+  PIN = document.getElementById('pin').value.trim();
+  if (!PIN) return;
+  document.getElementById('login-erro').textContent = '';
+  document.getElementById('tela-login').style.display = 'none';
+  document.getElementById('painel').classList.add('on');
+  carregar();
+}
+function sair() {
+  PIN = '';
+  document.getElementById('painel').classList.remove('on');
+  document.getElementById('tela-login').style.display = 'block';
+  document.getElementById('pin').value = '';
+}
+document.getElementById('pin').addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); });
+
+function apiUrlValida(){return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(API_URL);}
+async function carregar() {
+  document.getElementById('conteudo').innerHTML = '<div class="loading"><div class="spin"></div>A carregar dados…</div>';
+  if (!apiUrlValida()) {
+    document.getElementById('conteudo').innerHTML = '<div class="vazio">Configuração em falta: o endereço do servidor (API_URL) não está correto neste ficheiro.</div>';
+    return;
+  }
+  try {
+    const u = new URL(API_URL);
+    u.searchParams.set('action', 'dashboard');
+    if (PIN) u.searchParams.set('pin', PIN);
+    if (RH) u.searchParams.set('rh', RH);
+    const r = await fetch(u.toString());
+    const d = await r.json();
+    if (!d.ok) {
+      if (d.error === 'pin_invalido') {
+        if (RH) { document.getElementById('conteudo').innerHTML = '<div class="vazio">Link de acesso inválido. Contacte o administrador do RH.</div>'; return; }
+        sair(); document.getElementById('login-erro').textContent = 'Código incorrecto.'; return;
+      }
+      throw new Error(d.error || 'erro');
+    }
+    DADOS = d;
+    render(d);
+  } catch (e) {
+    document.getElementById('conteudo').innerHTML = '<div class="vazio">Não foi possível carregar. Verifique a ligação e tente novamente.</div>';
+  }
+}
+
+function corPct(p){return p>=70?'var(--verde)':p>=40?'var(--amarelo)':'var(--vermelho)';}
+function corNotaFundo(v){
+  if(v===null||v===undefined)return 'background:var(--surface-2);color:var(--txt3)';
+  if(v>=3.5)return 'background:var(--verde);color:#fff';
+  if(v>=2.5)return 'background:#79c48f;color:#10351f';
+  if(v>=1.5)return 'background:var(--amarelo);color:#fff';
+  return 'background:var(--vermelho);color:#fff';
+}
+function corFaixa(f){return {'Excede à expectativa':'var(--verde)','Atende à expectativa':'#79c48f','Abaixo da expectativa':'var(--amarelo)','Insatisfatório':'var(--vermelho)'}[f]||'var(--txt3)';}
+function cel(v){return v===null||v===undefined?'–':Number(v).toFixed(2);}
+
+function render(d){
+  const k=d.kpis;
+  let h='';
+
+  h+=`<div class="kpis">
+    <div class="kpi"><div class="kpi-lbl">Elegíveis</div><div class="kpi-num num">${k.elegiveis}</div><div class="kpi-sub">colaboradores</div></div>
+    <div class="kpi"><div class="kpi-lbl">Autoavaliações</div><div class="kpi-num azul num">${k.autoavaliacoes}</div><div class="kpi-sub">${k.pctAdesao}% de adesão</div></div>
+    <div class="kpi"><div class="kpi-lbl">Avaliações recebidas</div><div class="kpi-num num">${k.avaliacoes}</div><div class="kpi-sub">submetidas</div></div>
+    <div class="kpi"><div class="kpi-lbl">Resultados</div><div class="kpi-num verde num">${k.consolidados}</div><div class="kpi-sub">com nota final</div></div>
+  </div>`;
+
+  // ====== MATRIZ DE RESULTADOS ======
+  h+=`<div class="card"><div class="card-tit">Matriz de resultados por colaborador
+    <div class="dir"><button class="tbtn" onclick="exportarCSV()">⭳ Exportar CSV</button></div></div>`;
+  if(d.matriz && d.matriz.length){
+    h+='<div class="tbl-scroll"><table class="matriz"><thead><tr>'+
+       '<th>Colaborador</th><th>Unidade</th><th class="n">Nível</th>'+
+       '<th class="n">Auto</th><th class="n">Gestor</th><th class="n">Pares</th><th class="n">Clientes</th><th class="n">Liderados</th>'+
+       '<th class="n">Final</th><th>Classificação</th></tr></thead><tbody>';
+    d.matriz.forEach((p,i)=>{
+      const niv = p.grupo==='gestor' ? (p.metodologia||'').toString() : '90º';
+      h+=`<tr class="linha" onclick="toggleDet(${i})">
+        <td><b>${p.nome||'—'}</b><div class="falta-meta">${p.cargo||''}</div></td>
+        <td class="falta-meta">${p.unidade||''}</td>
+        <td class="n"><span class="nivel">${niv}</span></td>
+        <td class="n num">${cel(p.auto)}</td>
+        <td class="n num">${cel(p.gestor)}</td>
+        <td class="n num">${cel(p.pares)}</td>
+        <td class="n num">${cel(p.clientes)}</td>
+        <td class="n num">${cel(p.liderados)}</td>
+        <td class="n num" style="font-weight:700">${cel(p.final)}</td>
+        <td><span class="pill" style="background:${corFaixa(p.faixa)};color:#fff">${p.faixa}</span></td>
+      </tr>
+      <tr class="detalhe" id="det-${i}" style="display:none"><td colspan="10"><div class="detalhe-in" id="detin-${i}"></div></td></tr>`;
+    });
+    h+='</tbody></table></div>';
+    h+='<div class="falta-meta" style="margin-top:10px">Clique num colaborador para ver o detalhe por competência. Ponderação conforme o procedimento IT_RH_28 (autoavaliação com peso 0).</div>';
+  } else h+='<div class="vazio">Ainda sem resultados. Assim que chegarem autoavaliações e avaliações, a matriz aparece aqui.</div>';
+  h+='</div>';
+
+  // ====== FAIXAS (global / grupo) ======
+  h+='<div class="grid2">';
+  h+=`<div class="card"><div class="card-tit">Distribuição das notas finais
+      <div class="dir seg">
+        <button id="seg-global" class="${faixaModo==='global'?'on':''}" onclick="setFaixa('global')">Global</button>
+        <button id="seg-gestor" class="${faixaModo==='gestor'?'on':''}" onclick="setFaixa('gestor')">Gestores</button>
+        <button id="seg-nao" class="${faixaModo==='nao'?'on':''}" onclick="setFaixa('nao')">Não-gestores</button>
+      </div></div><div id="faixas-box">${faixasHTML(d)}</div></div>`;
+
+  // adesão por unidade
+  h+='<div class="card"><div class="card-tit">Adesão por unidade</div>';
+  if(d.unidades.length){
+    d.unidades.forEach(u=>{h+=`<div class="uni-row"><span class="uni-nome">${u.unidade}</span>
+      <div class="bar"><div class="bar-fill" style="width:${u.pct}%;background:${corPct(u.pct)}"></div></div>
+      <span class="uni-pct num" style="color:${corPct(u.pct)}">${u.auto}/${u.eleg}</span></div>`;});
+  } else h+='<div class="vazio">Sem dados ainda.</div>';
+  h+='</div></div>';
+
+  // ====== HEATMAPS ======
+  h+=heatmapHTML('Mapa de calor · autoavaliação de GESTORES', d.heatGestor, d.compsGestor);
+  h+=heatmapHTML('Mapa de calor · autoavaliação de NÃO-GESTORES', d.heatNaoGestor, d.compsNaoGestor);
+
+  // ====== QUEM FALTA ======
+  h+=`<div class="card"><div class="card-tit">Ainda não fizeram a autoavaliação (${d.faltam.length})</div>`;
+  if(d.faltam.length){
+    h+='<div class="falta-lista">';
+    d.faltam.forEach(p=>{
+      const tag=p.canal==='Email'?'<span class="tag tag-email">email</span>':p.canal==='WhatsApp'?'<span class="tag tag-wa">whatsapp</span>':'<span class="tag tag-sem">sem canal</span>';
+      h+=`<div class="falta-row"><div><div class="falta-nome">${p.nome}</div><div class="falta-meta">${p.cargo}</div></div>
+        <span class="falta-meta">${p.unidade}</span><span class="falta-meta">${p.metodologia}</span>${tag}</div>`;
+    });
+    h+='</div>';
+  } else h+='<div class="vazio">Toda a gente respondeu. 🎉</div>';
+  h+='</div>';
+
+  // ====== CLIMA ======
+  if(d.clima){
+    h+=`<div class="card"><div class="card-tit">Pesquisa de Satisfação · ${d.clima.total} ${d.clima.total===1?'resposta':'respostas'}</div>`;
+    if(d.clima.total>0){
+      // dimensões (expandíveis -> perguntas)
+      h+='<div style="font-size:12px;color:var(--txt2);margin-bottom:12px">Média por dimensão (escala 1–4) · clique para ver as perguntas</div>';
+      d.clima.dimensoes.forEach((dim,di)=>{
+        const v=dim.media, pct=v?(v/4*100):0;
+        const cor=v===null?'var(--txt3)':v>=3?'var(--verde)':v>=2.5?'#79c48f':v>=2?'var(--amarelo)':'var(--vermelho)';
+        const num=['I','II','III','IV','V','VI'][di];
+        const perg=d.clima.perguntas.filter(p=>p.dim===num);
+        h+=`<div class="dim-acc">
+          <div class="dim-head" onclick="toggleDim(${di})">
+            <div class="nm">${dim.nome}</div>
+            <div class="md num" style="color:${cor}">${v===null?'–':v.toFixed(2)}</div>
+            <div class="ar" id="ar-${di}">▸</div>
+          </div>
+          <div class="dim-body" id="dimb-${di}">`;
+        perg.forEach(p=>{
+          const pc=p.media===null?'var(--txt3)':p.media>=3?'var(--verde)':p.media>=2.5?'#5a9e74':p.media>=2?'var(--amarelo)':'var(--vermelho)';
+          h+=`<div class="perg-row"><div>${p.texto}</div><div class="pm num" style="color:${pc}">${p.media===null?'–':p.media.toFixed(2)}</div></div>`;
+        });
+        h+='</div></div>';
+      });
+      // motivos (gráfico de barras)
+      if(d.clima.motivosTop && d.clima.motivosTop.length){
+        const max=Math.max.apply(null,d.clima.motivosTop.map(m=>m.n));
+        h+='<div class="card-tit" style="margin-top:22px">Fatores de motivação mais citados</div>';
+        d.clima.motivosTop.forEach(m=>{
+          const pct=max?Math.round(m.n/max*100):0;
+          h+=`<div class="motiv-row"><span class="falta-meta" style="color:var(--txt)">${m.motivo}</span>
+            <div class="bar"><div class="bar-fill" style="width:${pct}%;background:var(--azul)"></div></div>
+            <span class="uni-pct num">${m.n}</span></div>`;
+        });
+      }
+      // comentários / melhorias
+      if(d.clima.comentarios && d.clima.comentarios.length){
+        h+=`<div class="card-tit" style="margin-top:22px">Sugestões e comentários (${d.clima.comentarios.length})</div>`;
+        h+='<div class="coment-lista">';
+        d.clima.comentarios.forEach(c=>{h+=`<div class="coment">${(''+c).replace(/</g,'&lt;')}</div>`;});
+        h+='</div>';
+      }
+    } else h+='<div class="vazio">Ainda sem respostas de clima.</div>';
+    h+='</div>';
+  }
+
+  document.getElementById('conteudo').innerHTML=h;
+}
+
+function faixasHTML(d){
+  const mapa={global:d.faixas,gestor:d.faixasGestor,nao:d.faixasNaoGestor};
+  const f=mapa[faixaModo]||d.faixas;
+  const total=Object.values(f).reduce((a,b)=>a+b,0);
+  if(!total) return '<div class="vazio">Ainda sem notas finais neste grupo.</div>';
+  let h='';
+  Object.keys(f).forEach(nome=>{
+    const n=f[nome],pct=total?Math.round(n/total*100):0;
+    h+=`<div class="faixa-row"><span class="uni-nome">${nome}</span>
+      <div class="bar"><div class="bar-fill" style="width:${pct}%;background:${corFaixa(nome)}"></div></div>
+      <span class="uni-pct num">${n} · ${pct}%</span></div>`;
+  });
+  return h;
+}
+function setFaixa(m){faixaModo=m;document.getElementById('faixas-box').innerHTML=faixasHTML(DADOS);
+  ['global','gestor','nao'].forEach(x=>{const b=document.getElementById('seg-'+x);if(b)b.className=(x===m?'on':'');});}
+
+function heatmapHTML(titulo,heat,comps){
+  let h=`<div class="card"><div class="card-tit">${titulo}</div>`;
+  if(heat && heat.length){
+    const nC=comps.length;
+    h+='<div class="heat-scroll"><div class="heat" style="grid-template-columns:150px repeat('+nC+',1fr)"><div></div>';
+    comps.forEach(c=>h+=`<div class="heat-hd">${c}</div>`);
+    heat.forEach(row=>{h+=`<div class="heat-lbl">${row.unidade}</div>`;
+      row.medias.forEach(v=>{h+=`<div class="heat-cell num" style="${corNotaFundo(v)}">${v===null?'–':v.toFixed(1)}</div>`;});});
+    h+='</div></div>';
+  } else h+='<div class="vazio">Sem autoavaliações neste grupo ainda.</div>';
+  h+='</div>';return h;
+}
+
+function toggleDim(i){const b=document.getElementById('dimb-'+i),a=document.getElementById('ar-'+i);
+  const open=b.classList.toggle('open');a.textContent=open?'▾':'▸';}
+
+function toggleDet(i){
+  const tr=document.getElementById('det-'+i);
+  if(tr.style.display==='none'){
+    const p=DADOS.matriz[i];
+    let s='<table class="sub"><thead><tr><th>Competência</th><th>Auto</th><th>Gestor</th><th>Pares</th><th>Clientes</th><th>Liderados</th><th>Ponderado</th></tr></thead><tbody>';
+    p.comps.forEach(c=>{s+=`<tr><td>${c.nome}</td><td class="num">${cel(c.auto)}</td><td class="num">${cel(c.gestor)}</td><td class="num">${cel(c.pares)}</td><td class="num">${cel(c.clientes)}</td><td class="num">${cel(c.liderados)}</td><td class="num" style="font-weight:700">${cel(c.ponderado)}</td></tr>`;});
+    s+='</tbody></table>';
+    document.getElementById('detin-'+i).innerHTML=s;
+    tr.style.display='table-row';
+  } else tr.style.display='none';
+}
+
+function exportarCSV(){
+  if(!DADOS||!DADOS.matriz) return;
+  const cab=['Colaborador','Cargo','Unidade','Nivel','Auto','Gestor','Pares','Clientes','Liderados','Nota final','Classificacao','Nº avaliadores'];
+  const linhas=DADOS.matriz.map(p=>[p.nome,p.cargo,p.unidade,(p.grupo==='gestor'?p.metodologia:'90º'),p.auto,p.gestor,p.pares,p.clientes,p.liderados,p.final,p.faixa,p.nAval]);
+  let csv='﻿'+cab.join(';')+'\n'+linhas.map(l=>l.map(c=>c===null||c===undefined?'':('"'+String(c).replace(/"/g,'""')+'"')).join(';')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Pulso_JFS_Matriz_Resultados.csv';a.click();
+}
+</script>
+</body>
+</html>
