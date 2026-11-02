@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e5b9a">
+<title>Pulso JFS · Pesquisa de Satisfação</title>
+<link rel="stylesheet" href="estilo.css">
+<style>
+/* ajustes específicos da pesquisa de clima (R3) */
+.wrap{max-width:520px}
+.dim-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--azul);margin-bottom:4px}
+.dim-titulo{font-size:19px;font-weight:700;color:var(--txt);margin-bottom:4px;letter-spacing:-.2px}
+.dim-sub{font-size:12px;color:var(--txt-2);margin-bottom:16px}
+
+.intro-box{padding:20px 18px}
+.intro-box h2{font-size:19px;margin-bottom:12px;color:var(--txt)}
+.intro-box p{font-size:14px;color:var(--txt-2);line-height:1.6;margin-bottom:10px}
+.intro-box .periodo{background:var(--azul-bg);border:1px solid rgba(14,91,154,.2);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--azul);font-weight:600;margin:4px 0 10px}
+.intro-box .anon{background:var(--verde-bg);border:1px solid rgba(46,158,91,.25);border-radius:10px;padding:12px;font-size:13px;color:var(--verde);margin-top:8px;display:flex;gap:8px;align-items:center}
+
+.select-box{margin-bottom:14px}
+.select-box label{display:block;font-size:13px;font-weight:600;color:var(--txt);margin-bottom:6px}
+.select-box label .fac{font-weight:400;color:var(--txt-3);font-size:11px}
+.sel{width:100%;padding:12px;background:var(--surface);border:1.5px solid var(--linha);border-radius:10px;color:var(--txt);font-family:var(--sans);font-size:14px}
+.sel:focus{outline:none;border-color:var(--azul)}
+.nota-grupo{font-size:12px;color:var(--txt-2);background:var(--surface-2);border:1px solid var(--linha);border-radius:10px;padding:11px 12px;margin-bottom:16px;line-height:1.5}
+
+/* bloco de afirmação com opções rotuladas + emoji (R3) */
+.afirm{padding:16px 0;border-bottom:1px solid var(--linha)}
+.afirm:last-child{border-bottom:none}
+.afirm-txt{font-size:15px;color:var(--txt);line-height:1.45;margin-bottom:12px;font-weight:600}
+.opcoes{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--linha);border-radius:11px;background:var(--surface);cursor:pointer;transition:all .12s}
+.opt:active{transform:scale(.99)}
+.opt .emo{font-size:23px;line-height:1;width:28px;text-align:center;flex-shrink:0}
+.opt .lbl{font-size:14px;font-weight:600;color:var(--txt)}
+.opt.sel{border-width:2px;padding:11px 13px}
+.opt.sel.o1{background:rgba(198,65,65,.12);border-color:#C64141}
+.opt.sel.o2{background:rgba(209,150,15,.14);border-color:var(--amarelo)}
+.opt.sel.o3{background:rgba(95,192,129,.18);border-color:#5FC081}
+.opt.sel.o4{background:var(--verde-bg);border-color:var(--verde)}
+.opt.sel.ona{background:var(--surface-2);border-color:var(--linha-2)}
+
+.dim-aviso{font-size:12px;color:var(--amarelo);margin-top:12px;min-height:16px;font-weight:600}
+
+.motivos-grid{display:flex;flex-direction:column;gap:7px}
+.motivo{display:flex;align-items:center;gap:10px;padding:12px 13px;background:var(--surface);border:1.5px solid var(--linha);border-radius:9px;font-size:13px;cursor:pointer;transition:all .12s}
+.motivo:active{transform:scale(.99)}
+.motivo.sel{background:var(--azul-bg);border-color:var(--azul)}
+.motivo .cx{width:20px;height:20px;border:1.5px solid var(--linha-2);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px}
+.motivo.sel .cx{background:var(--azul);border-color:var(--azul);color:#fff}
+.contador{font-size:12px;color:var(--txt-2);text-align:center;margin-top:10px}
+
+.txt-area{width:100%;padding:12px;background:var(--surface);border:1.5px solid var(--linha);border-radius:10px;color:var(--txt);font-family:var(--sans);font-size:14px;resize:none;margin-bottom:10px}
+.txt-area:focus{outline:none;border-color:var(--azul)}
+.txt-lbl{font-size:13px;color:var(--txt-2);margin-bottom:6px}
+.opcional{font-size:12px;color:var(--txt-3);font-style:italic;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div class="wrap" style="height:100%">
+
+<!-- LOADING -->
+<div class="tela ativa" id="tela-loading">
+  <div class="centro"><div class="logo-grande">Pulso <span>JFS</span></div><div class="spinner"></div><p class="cinza">A carregar…</p></div>
+</div>
+
+<!-- SEM TOKEN -->
+<div class="tela" id="tela-sem-token">
+  <div class="centro"><div class="logo-grande">Pulso <span>JFS</span></div>
+    <p class="cinza" style="margin-top:16px">Para responder, abra o link pessoal que recebeu do RH por email ou WhatsApp.</p></div>
+</div>
+
+<!-- ERRO -->
+<div class="tela" id="tela-erro">
+  <div class="centro"><div class="logo-grande">Pulso <span>JFS</span></div>
+    <p class="cinza" id="erro-msg" style="margin-top:16px"></p>
+    <button class="btn-primario" style="margin-top:16px" onclick="location.reload()">Tentar novamente</button></div>
+</div>
+
+<!-- INTRO -->
+<div class="tela" id="tela-intro">
+  <div class="hero">
+    <div class="logo">Pulso <span>JFS</span></div>
+    <div class="hero-cargo" style="margin-top:10px">Pesquisa de Satisfação dos Colaboradores · 2026</div>
+  </div>
+  <div class="corpo intro-box">
+    <h2>A sua opinião conta.</h2>
+    <p>Queremos conhecer a sua experiência na empresa: o que mais valoriza e o que podemos melhorar. Não há respostas certas ou erradas — responda com sinceridade.</p>
+    <p><b>Como responder:</b> para cada frase, escolha a opção que melhor corresponde à sua situação. Se a frase não se aplica ao seu caso, ou não sabe, escolha “Não sei / Não se aplica”.</p>
+    <div class="periodo">&#128197; Período para responder: 16 a 30 de Novembro de 2026</div>
+    <div class="anon"><span>&#128274;</span> A pesquisa é anónima — não escreva o seu nome nem nada que o identifique. Nenhuma resposta é ligada a si.</div>
+  </div>
+  <div class="pe">
+    <button class="btn-primario" onclick="comecar()">Começar</button>
+  </div>
+</div>
+
+<!-- RETOMAR RASCUNHO -->
+<div class="tela" id="tela-rascunho">
+  <div class="hero">
+    <div class="logo">Pulso <span>JFS</span></div>
+    <div class="hero-cargo" style="margin-top:10px">Tem respostas guardadas</div>
+  </div>
+  <div class="corpo intro-box">
+    <h2>Continuar de onde parou?</h2>
+    <p>Encontrámos respostas que começou a preencher neste aparelho. Pode continuar ou começar de novo.</p>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" onclick="descartarRascunho()">Começar de novo</button>
+    <button class="btn-primario" style="flex:1.5" onclick="retomarRascunho()">Continuar</button>
+  </div>
+</div>
+
+<!-- JÁ RESPONDEU -->
+<div class="tela" id="tela-ja">
+  <div class="fim">
+    <div class="check">&#10003;</div>
+    <div class="fim-t">Já respondeu a esta pesquisa.</div>
+    <div class="fim-p">
+      <div class="pinfo neutro"><span>&#128202;</span> Para garantir resultados fiáveis, cada pessoa responde apenas uma vez.</div>
+      <div class="pinfo neutro"><span>&#128274;</span> Obrigado pela sua participação!</div>
+    </div>
+  </div>
+</div>
+
+<!-- DIMENSÃO (I..VII) -->
+<div class="tela" id="tela-dim">
+  <div class="cab">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Pesquisa de Satisfação · anónima</div>
+  </div>
+  <div class="barra-fundo"><div class="barra" id="d-barra"></div></div>
+  <div class="corpo">
+    <div class="dim-badge" id="d-badge"></div>
+    <div class="dim-titulo" id="d-titulo"></div>
+    <div class="dim-sub" id="d-sub"></div>
+    <div id="d-afirmacoes"></div>
+    <div class="dim-aviso" id="d-aviso"></div>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" id="d-ant" onclick="dimAnterior()">Anterior</button>
+    <button class="btn-primario" id="d-prox" style="flex:1.5" onclick="dimProxima()">Próxima</button>
+  </div>
+</div>
+
+<!-- 8. O QUE MAIS VALORIZA -->
+<div class="tela" id="tela-motivos">
+  <div class="cab">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">O que mais valoriza</div>
+  </div>
+  <div class="corpo">
+    <div class="q-desc" style="margin-bottom:14px">Escolha, no <b>máximo, 3 motivos</b> pelos quais gosta de trabalhar nesta empresa.</div>
+    <div class="motivos-grid" id="motivos-lista"></div>
+    <div class="contador" id="motivos-cont">0 de 3 seleccionados</div>
+    <div id="m-outro-wrap" style="margin-top:14px;display:none">
+      <div class="txt-lbl">Outro. Qual?</div>
+      <textarea class="txt-area" id="m-outro" rows="2" placeholder="Indique o motivo…"></textarea>
+    </div>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" onclick="voltarDimensoes()">Anterior</button>
+    <button class="btn-primario" style="flex:1.5" onclick="mostrar('tela-melhorias')">Continuar</button>
+  </div>
+</div>
+
+<!-- 9. O QUE GOSTARIA QUE MELHORASSE -->
+<div class="tela" id="tela-melhorias">
+  <div class="cab">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">O que gostaria que melhorasse</div>
+  </div>
+  <div class="corpo">
+    <div class="q-desc" style="margin-bottom:6px">Indique, no <b>máximo, 3 aspectos</b> que a empresa poderia melhorar.</div>
+    <div class="opcional">Resposta facultativa.</div>
+    <div class="txt-lbl">1.</div>
+    <textarea class="txt-area" id="mel1" rows="2" placeholder="Primeiro aspecto a melhorar…"></textarea>
+    <div class="txt-lbl">2.</div>
+    <textarea class="txt-area" id="mel2" rows="2" placeholder="Opcional…"></textarea>
+    <div class="txt-lbl">3.</div>
+    <textarea class="txt-area" id="mel3" rows="2" placeholder="Opcional…"></textarea>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" onclick="mostrar('tela-motivos')">Anterior</button>
+    <button class="btn-primario" style="flex:1.5" onclick="mostrar('tela-comentario')">Continuar</button>
+  </div>
+</div>
+
+<!-- 10. COMENTÁRIO LIVRE -->
+<div class="tela" id="tela-comentario">
+  <div class="cab">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Comentário livre</div>
+  </div>
+  <div class="corpo">
+    <div class="q-desc" style="margin-bottom:6px">Use este espaço para qualquer outra informação ou comentário que considere importante.</div>
+    <div class="opcional">Resposta facultativa.</div>
+    <textarea class="txt-area" id="comentario" rows="6" placeholder="O seu comentário…"></textarea>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" onclick="mostrar('tela-melhorias')">Anterior</button>
+    <button class="btn-primario" style="flex:1.5" onclick="mostrar('tela-ident')">Continuar</button>
+  </div>
+</div>
+
+<!-- 11. SOBRE SI (demográficos, no fim, facultativos) -->
+<div class="tela" id="tela-ident">
+  <div class="cab">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Sobre si · facultativo</div>
+  </div>
+  <div class="corpo">
+    <div class="nota-grupo">Estas respostas são facultativas e servem apenas para agrupar resultados. Nunca são divulgadas para grupos com menos de 7 respostas.</div>
+    <div class="select-box">
+      <label>Área de negócio <span class="fac">facultativo</span></label>
+      <select class="sel" id="i-area"><option value="">Seleccione…</option></select>
+    </div>
+    <div class="select-box">
+      <label>Unidade <span class="fac">facultativo</span></label>
+      <select class="sel" id="i-unidade"><option value="">Seleccione…</option></select>
+    </div>
+    <div class="select-box">
+      <label>Antiguidade na empresa <span class="fac">facultativo</span></label>
+      <select class="sel" id="i-antig">
+        <option value="">Prefiro não responder</option>
+        <option>Até 2 anos</option>
+        <option>2 a 5 anos</option>
+        <option>Mais de 5 anos</option>
+      </select>
+    </div>
+    <div class="select-box">
+      <label>Idade <span class="fac">facultativo</span></label>
+      <select class="sel" id="i-idade">
+        <option value="">Prefiro não responder</option>
+        <option>Até 30 anos</option>
+        <option>30 a 45 anos</option>
+        <option>Mais de 45 anos</option>
+      </select>
+    </div>
+    <div class="select-box">
+      <label>Género <span class="fac">facultativo</span></label>
+      <select class="sel" id="i-genero">
+        <option value="">Prefiro não responder</option>
+        <option>Feminino</option>
+        <option>Masculino</option>
+      </select>
+    </div>
+  </div>
+  <div class="pe">
+    <button class="btn-sec" onclick="mostrar('tela-comentario')">Anterior</button>
+    <button class="btn-primario" id="btn-submeter" style="flex:1.5" onclick="submeter()">Submeter pesquisa</button>
+  </div>
+</div>
+
+<!-- FIM -->
+<div class="tela" id="tela-fim">
+  <div class="cab">
+    <div class="cab-t">Pulso <span>JFS</span></div>
+    <div class="cab-s">Pesquisa concluída</div>
+  </div>
+  <div class="fim">
+    <div class="check">&#10003;</div>
+    <div class="fim-t">A sua voz foi registada!</div>
+    <div class="fim-p">
+      <div class="pinfo ok" id="fim-sync"></div>
+      <div class="pinfo neutro"><span>&#128274;</span> A sua resposta é totalmente anónima</div>
+      <div class="pinfo neutro"><span>&#128202;</span> Os resultados serão partilhados com todos</div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script src="clima.js"></script>
+</body>
+</html>
